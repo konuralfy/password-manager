@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import Login from './src/components/Login';
 import Main from './src/components/Main';
+import Add from './src/components/Add';
+
 import {
       createStackNavigator,
       createAppContainer
@@ -9,11 +11,23 @@ import {
 
 const RootStack  = createStackNavigator({
     Login:{
-      screen: Login
+      screen: Login,
+      navigationOptions: {
+        header: null,
+      }
     },
     Main:{
-      screen: Main
-    }
+      screen: Main,
+      navigationOptions: {
+        header: null,
+      }
+    },
+    Add:{
+      screen: Add,
+      navigationOptions: {
+        title: 'Add New',
+      }
+    },
   }
 );
 
