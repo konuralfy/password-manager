@@ -21,7 +21,7 @@ export default class Login extends Component {
   };
 
   login = (navigate) => {
-    if(this.state.username == 'a' && this.state.password == 'a'){
+    if(this.state.username == 'x' && this.state.password == 'x'){
       navigate('Main')
       title="Main";
     }else{

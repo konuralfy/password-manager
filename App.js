@@ -9,19 +9,20 @@ import {
       createAppContainer
     } from 'react-navigation';
 
+
 const RootStack  = createStackNavigator({
-    Login:{
-      screen: Login,
-      navigationOptions: {
-        header: null,
-      }
-    },
-    Main:{
-      screen: Main,
-      navigationOptions: {
-        header: null,
-      }
-    },
+  Login:{
+    screen: Login,
+    navigationOptions: {
+      header: null,
+    }
+  },
+  Main:{
+    screen: Main,
+    navigationOptions: {
+      header: null,
+    }
+  },
     Add:{
       screen: Add,
       navigationOptions: {
