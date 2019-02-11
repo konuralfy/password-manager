@@ -21,7 +21,7 @@ export default class Login extends Component {
   };
 
   login = (navigate) => {
-    if(this.state.username == 'x' && this.state.password == 'x'){
+    if(this.state.username == 'konuralp' && this.state.password == 'xx'){
       navigate('Main')
       title="Main";
     }else{
@@ -44,6 +44,7 @@ export default class Login extends Component {
           <TextInput style={styles.inputs}
               placeholder="Username"
               underlineColorAndroid='transparent'
+              autoCapitalize = 'none'
               onChangeText={(username) => this.setState({username})}/>
         </View>
         <View style={styles.inputContainer}>
@@ -53,6 +54,7 @@ export default class Login extends Component {
               placeholder="Password"
               secureTextEntry={true}
               underlineColorAndroid='transparent'
+              autoCapitalize = 'none'
               onChangeText={(password) => this.setState({password})}/>
         </View>
 

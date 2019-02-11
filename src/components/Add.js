@@ -14,7 +14,7 @@ export default class extends Component{
     }
   };
 
-  saveToStorage = async () => {
+  saveToStorage = async (navigate) => {
     const details = {
       title: this.state.title,
       username : this.state.username,
@@ -29,7 +29,7 @@ export default class extends Component{
        newDetails.push(details);
        await AsyncStorage.setItem(details.title, JSON.stringify(newDetails))
        .then(() => {
-         alert("Saved");
+         navigate('Main');
        })
        .catch(() => {
          alert("Error while saving");
@@ -40,6 +40,7 @@ export default class extends Component{
 }
 
     render(){
+      const { navigate } = this.props.navigation;
         return(
           <Container>
             <Content padder>
@@ -50,11 +51,11 @@ export default class extends Component{
                 </Item>
                 <Item floatingLabel>
                   <Label>Username / E-mail</Label>
-                  <Input onChangeText={(username) => this.setState({username})} />
+                  <Input autoCapitalize='none' onChangeText={(username) => this.setState({username})} />
                 </Item>
                 <Item floatingLabel last>
                   <Label>Password</Label>
-                  <Input onChangeText= {(password) => this.setState({password})} />
+                  <Input autoCapitalize='none' onChangeText= {(password) => this.setState({password})} />
                 </Item>
 
                 <Textarea rowSpan={5}
@@ -68,7 +69,7 @@ export default class extends Component{
               <Button block
               bordered
               style={{ marginTop: 50 }}
-              onPress={() => this.saveToStorage()}
+              onPress={() => this.saveToStorage(navigate)}
               >
                 <Text>Add</Text>
               </Button>

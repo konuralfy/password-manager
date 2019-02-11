@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View,AsyncStorage} from "react-native";
+import {View,AsyncStorage,Dimensions} from "react-native";
 import { Container, Header, Content, Card, CardItem, Text, Body, Icon, Fab,Button } from "native-base";
 import Modal from "react-native-modal";
 
@@ -99,7 +99,7 @@ export default class extends Component{
                   </Fab>
               </View>
 
-              <Modal transparent isVisible={this.state.isModalVisible}>
+              <Modal transparent isVisible={this.state.isModalVisible} style={{ marginTop: Dimensions.get('window').height / 2 - 110}}>
                 <View style={{ flex: 1 }}>
                 <Card>
                     <CardItem header bordered>
@@ -110,17 +110,20 @@ export default class extends Component{
                         <Text>
                           Username: {this.state.object.username}
                         </Text>
-                        <Text>
+                        <Text style={{marginTop:10}}>
                           Password: {this.state.object.password}
                         </Text>
-                        <Text>
+                        <Text style={{marginTop:10,marginBottom:20}}>
                           Description: {this.state.object.description}
                         </Text>
                       </Body>
                     </CardItem>
                   </Card>
-                  <Button onPress={this._toggleModal}>
-                    <Text>Hide me!</Text>
+                  <Button onPress={this._toggleModal} style={{
+                    marginLeft: Dimensions.get('window').width / 2 - 60,
+                    marginTop: 20
+                }}>
+                    <Text>Close</Text>
                   </Button>
                 </View>
               </Modal>
