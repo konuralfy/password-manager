@@ -11,14 +11,14 @@ import {
 
 
 const RootStack  = createStackNavigator({
-  Login:{
-    screen: Login,
+  Main:{
+    screen: Main,
     navigationOptions: {
       header: null,
     }
   },
-  Main:{
-    screen: Main,
+  Login:{
+    screen: Login,
     navigationOptions: {
       header: null,
     }
