@@ -1,8 +1,9 @@
 import React, {Component} from "react";
 import {View,AsyncStorage,Dimensions,ListView} from "react-native";
-import { Container, Header, Content, Card, CardItem, Text, Body, Icon, Fab,Button,List,ListItem } from "native-base";
+import { Container, Header, Content, Card, CardItem, Text, Body, Icon, Fab,Button,List,ListItem,Toast,Input,Form,Item,Textarea } from "native-base";
 import Modal from "react-native-modal";
-// console.disableYellowBox = true;
+import { ConfirmDialog } from 'react-native-simple-dialogs';
+console.disableYellowBox = true;
 
 export default class extends Component{
 
@@ -11,8 +12,48 @@ export default class extends Component{
   this.state = {
       cc: [],
       isDetailsModalVisible: false,
-      object: [],
       isDeleteModalVisible: false,
+      isEditModalVisible: false,
+      object: [],
+      title: '',
+      username   : '',
+      password: '',
+      description: '',
+    }
+  }
+
+  async _updateData(){
+    const details = {
+      title: this.state.title,
+      username : this.state.username,
+      password: this.state.password,
+      description: this.state.description,
+    };
+    updateData = [];
+    updateData.push(details);
+    await AsyncStorage.setItem(this.state.object.key, JSON.stringify( updateData )).then(() => {
+      this.setState({ isEditModalVisible: false});
+      this.reloadPage();
+      Toast.show({
+        text: "Updated successfully !",
+        textStyle: { color: "white" },
+      })
+    });
+
+  }
+
+  async _deleteData(key) {
+    try {
+      await AsyncStorage.removeItem(key);
+      this.setState({ isDeleteModalVisible: false});
+      this.reloadPage();
+      Toast.show({
+        text: "Deleted !",
+        textStyle: { color: "white" },
+      })
+    }
+    catch(exception) {
+      return false;
     }
   }
 
@@ -34,7 +75,7 @@ export default class extends Component{
           await AsyncStorage.getItem(items[i]).then(ok => {
             var object = JSON.parse(ok.substring(1,ok.length-1));
               cards.push(
-                <ListItem noBorder style={{height:100,marginBottom:25}} key={object.title}>
+                <ListItem noBorder style={{height:100,marginBottom:25}} key={items[i]}>
                 <Card style={{ width:Dimensions.get('window').width - 30,marginTop:30}}>
                   <CardItem header button onPress={() => this.toggleDetailsModal(object)}>
                     <Text> {object.title} </Text>
@@ -61,17 +102,18 @@ export default class extends Component{
 
     componentWillMount(){
       this.props.navigation.addListener('willFocus', (route) => {
-
-        this.setState({ showLoading: true});
-        this.getAll().then(ok => {
-            this.state.cc = [];
-            this.state.cc.push(...ok);
-            this.setState({ showLoading: false });
-        });
-
+        this.reloadPage();
       });
     }
 
+  reloadPage(){
+    this.setState({ showLoading: true});
+    this.getAll().then(ok => {
+        this.state.cc = [];
+        this.state.cc.push(...ok);
+        this.setState({ showLoading: false });
+    });
+  }
 
     add = (navigate) => {
       navigate('Add')
@@ -84,7 +126,39 @@ export default class extends Component{
 
     toggleDeleteModal = (object) => {
       this.state.object = object;
-      this.setState({ isDeleteModalVisible: !this.state.isDeleteModalVisible } );
+      if(object.key){
+          AsyncStorage.getItem(object.key).then((value) => {
+              var object = JSON.parse(value.substring(1,value.length-1));
+              this.setState({title: object.title});
+              this.setState({username: object.username});
+              this.setState({password: object.password});
+              this.setState({description: object.description});
+          })
+          .then(res => {
+            this.setState({ isDeleteModalVisible: !this.state.isDeleteModalVisible } );
+          });
+      }else{
+        this.setState({ isDeleteModalVisible: !this.state.isDeleteModalVisible } );
+      }
+    }
+
+    toggleEditModal = (object) => {
+      this.state.object = object;
+      if(object.key){
+          AsyncStorage.getItem(object.key).then((value) => {
+              var object = JSON.parse(value.substring(1,value.length-1));
+              this.setState({title: object.title});
+              this.setState({username: object.username});
+              this.setState({password: object.password});
+              this.setState({description: object.description});
+          })
+          .then(res => {
+            this.setState({ isEditModalVisible: !this.state.isEditModalVisible } );
+          });
+      }else{
+        this.setState({ isEditModalVisible: !this.state.isEditModalVisible } );
+      }
+
     }
 
     render(){
@@ -105,7 +179,7 @@ export default class extends Component{
                     <Icon active name="trash"/>
                   </Button>}
                 renderLeftHiddenRow={data =>
-                  <Button full primary onPress={() => alert('data')}>
+                  <Button full primary onPress={() => this.toggleEditModal(data)}>
                     <Icon active type="FontAwesome" name="edit"/>
                   </Button>}
               />
@@ -156,13 +230,68 @@ export default class extends Component{
                 </View>
               </Modal>
 
-              <Modal transparent isVisible={this.state.isDeleteModalVisible} style={{ marginTop: Dimensions.get('window').height / 2 - 110}}>
+              <Modal transparent isVisible={this.state.isEditModalVisible} style={{ marginTop: Dimensions.get('window').height / 2 - 300}}>
                 <View style={{ flex: 1 }}>
-                <Button full danger onPress={() => this.setState({ isDeleteModalVisible: !this.state.isDeleteModalVisible } )}>
-                  <Text>Delete</Text>
-                </Button>
+                <View style={{ height: 400,backgroundColor:'white' }}>
+                <Form>
+
+                <Item style={{ borderColor: 'transparent' }}>
+                  <Button onPress={this.toggleEditModal} style={{
+                      marginLeft: Dimensions.get('window').width / 2 + 100,
+                      marginTop: 5,
+                      backgroundColor: 'white',
+                      borderRadius:40,
+                    }}>
+                    <Text style={{color: 'black'}}>X</Text>
+                  </Button>
+                </Item>
+                  <Item style={{ borderColor: 'transparent' }}>
+                    <Text style={{marginRight: 58}}>Title</Text>
+                    <Input placeholder="Title" value={this.state.title} onChangeText= {(title) => this.setState({title: title})}/>
+                  </Item>
+                  <Item style={{ borderColor: 'transparent' }}>
+                      <Text style={{marginRight: 20}}>Username</Text>
+                      <Input placeholder="Username" value={this.state.username} onChangeText= {(username) => this.setState({username: username})}/>
+                  </Item>
+                  <Item style={{ borderColor: 'transparent' }}>
+                      <Text style={{marginRight: 20}}>Password</Text>
+                      <Input placeholder="Password" value={this.state.password} onChangeText= {(password) => this.setState({password: password})}/>
+                  </Item>
+                  <Item style={{ borderColor: 'transparent' }}>
+                      <Text style={{marginRight: 20}}>Description</Text>
+                  </Item>
+                  <Item style={{ borderColor: 'transparent' }}>
+                  <Textarea rowSpan={4}
+                  value={this.state.description}
+                   bordered
+                   placeholder="Description"
+                   style={{ width: Dimensions.get('window').width / 2 + 100,marginTop:10 }}
+                   onChangeText= {(description) => this.setState({description: description})}
+                   />
+                  </Item>
+                  <Item style={{ borderColor: 'transparent' }}>
+                      <Button primary style={{marginLeft: 120,marginTop:10}} onPress={() => this._updateData()}><Text>Update</Text></Button>
+                  </Item>
+                  </Form>
+                </View>
                 </View>
               </Modal>
+
+
+              <ConfirmDialog
+                  title={"Delete " + `${this.state.title}`}
+                  message="Are you sure about that?"
+                  visible={this.state.isDeleteModalVisible}
+                  onTouchOutside={() =>  this.setState({ isDeleteModalVisible: !this.state.isDeleteModalVisible })}
+                  positiveButton={{
+                      title: "YES",
+                      onPress: () => this._deleteData(this.state.object.key)
+                  }}
+                  negativeButton={{
+                      title: "NO",
+                      onPress: () => this.setState({ isDeleteModalVisible: !this.state.isDeleteModalVisible })
+                  }}
+              />
 
             </Container>
           )

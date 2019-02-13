@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
+import { Root } from "native-base";
 import Login from './src/components/Login';
 import Main from './src/components/Main';
 import Add from './src/components/Add';
@@ -11,14 +12,14 @@ import {
 
 
 const RootStack  = createStackNavigator({
-  Main:{
-    screen: Main,
+  Login:{
+    screen: Login,
     navigationOptions: {
       header: null,
     }
   },
-  Login:{
-    screen: Login,
+  Main:{
+    screen: Main,
     navigationOptions: {
       header: null,
     }
@@ -34,4 +35,7 @@ const RootStack  = createStackNavigator({
 
 const App = createAppContainer(RootStack);
 
-export default App;
+export default () =>
+  <Root>
+    <App />
+  </Root>;

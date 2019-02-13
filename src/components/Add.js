@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {View,AsyncStorage,TextInput} from "react-native";
-import { Container, Header, Content, Form, Item, Input, Label,Textarea,Button,Text } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Label,Textarea,Button,Text,Toast } from 'native-base';
 
 
 export default class extends Component{
@@ -27,9 +27,13 @@ export default class extends Component{
     if( !newDetails ){
        newDetails = [];
        newDetails.push(details);
-       await AsyncStorage.setItem(details.title, JSON.stringify(newDetails))
+       await AsyncStorage.setItem('_'+details.title, JSON.stringify(newDetails))
        .then(() => {
          navigate('Main');
+         Toast.show({
+           text: "Added successfully !",
+           textStyle: { color: "white" },
+         });
        })
        .catch(() => {
          alert("Error while saving");
