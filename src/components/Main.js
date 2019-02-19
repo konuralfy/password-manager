@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View,AsyncStorage,Dimensions,ListView} from "react-native";
+import {View,AsyncStorage,Dimensions,ListView,BackHandler} from "react-native";
 import { Container, Header, Content, Card, CardItem, Text, Body, Icon, Fab,Button,List,ListItem,Toast,Input,Form,Item,Textarea } from "native-base";
 import Modal from "react-native-modal";
 import { ConfirmDialog } from 'react-native-simple-dialogs';
@@ -14,13 +14,28 @@ export default class extends Component{
       isDetailsModalVisible: false,
       isDeleteModalVisible: false,
       isEditModalVisible: false,
+      isExitModalVisible: false,
       object: [],
       title: '',
       username   : '',
       password: '',
       description: '',
     }
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+
   }
+
+  componentWillUnmount() {
+      BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+
+  handleBackButtonClick() {
+      this.setState({ isExitModalVisible: !this.state.isExitModalVisible })
+      // this.props.navigation.goBack(null);
+      return true;
+  }
+
+
 
   async _updateData(){
     const details = {
@@ -74,6 +89,7 @@ export default class extends Component{
         for(var i=0; i<items.length;i++){
           await AsyncStorage.getItem(items[i]).then(ok => {
             var object = JSON.parse(ok.substring(1,ok.length-1));
+            if(items[i] !== "userDetails"){
               cards.push(
                 <ListItem noBorder style={{height:100,marginBottom:25}} key={items[i]}>
                 <Card style={{ width:Dimensions.get('window').width - 30,marginTop:30}}>
@@ -90,6 +106,7 @@ export default class extends Component{
                 </Card>
                 </ListItem>
               )
+            }
           });
         }
         return cards;
@@ -101,6 +118,7 @@ export default class extends Component{
     };
 
     componentWillMount(){
+      BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
       this.props.navigation.addListener('willFocus', (route) => {
         this.reloadPage();
       });
@@ -290,6 +308,21 @@ export default class extends Component{
                   negativeButton={{
                       title: "NO",
                       onPress: () => this.setState({ isDeleteModalVisible: !this.state.isDeleteModalVisible })
+                  }}
+              />
+
+              <ConfirmDialog
+                  title={"Exit App"}
+                  message="Do you want to exit?"
+                  visible={this.state.isExitModalVisible}
+                  onTouchOutside={() =>  this.setState({ isExitModalVisible: !this.state.isExitModalVisible })}
+                  positiveButton={{
+                      title: "YES",
+                      onPress: () => BackHandler.exitApp()
+                  }}
+                  negativeButton={{
+                      title: "NO",
+                      onPress: () => this.setState({ isExitModalVisible: !this.state.isExitModalVisible })
                   }}
               />
 
