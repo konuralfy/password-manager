@@ -29,7 +29,9 @@ export default class Login extends Component {
   };
 
   componentWillMount(){
-    this.getRememberMe();
+    this.props.navigation.addListener('willFocus', (route) => {
+      this.getRememberMe();
+    });
   }
 
   getRememberMe = async () => {
