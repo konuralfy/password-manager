@@ -3,7 +3,7 @@
 
 ### Description
 
-password manager for mobile phones. Built with React-Native
+It's a password manager application built with React-Native. It does basic add, edit and delete actions and holds the data at local storage.
 
 ### Media
 
